@@ -1,0 +1,20 @@
+<fieldset>
+
+<p>Any: <input  type="search" ng-model="s" ng-attr-id="s" placeholder="Busca simples"></p>
+<color dir="isn"><p><input type="checkbox" id="isn" ng-model="impeditivoSimplesNacional" value="true"  ng-change="allcheck()"  /> <label for="isn">Impeditivo </label></p></color>
+<color dir="psn"><p><input type="checkbox" id="psn" ng-model="permitidoSimplesNacional" value="true" ng-change="allcheck()" /> <label for="psn">Permitido </label></p></color>
+
+    	<color dir="tsn"><p ><input type="checkbox"  id="tsn" ng-model="togetherSimplesNacional"  value="true" ng-change="allcheckall()"/> <label for="tsn">Concomitantemente Permitido e impeditivo</label></p></color>
+</fieldset>
+
+
+<ul class="example-animate-container">
+    <li class="animate-repeat" ng-repeat="List in cnaes.result | filter:s | filter:{impeditivoSimplesNacional: impeditivoSimplesNacional,permitidoSimplesNacional:permitidoSimplesNacional  }">
+      [{{$index + 1}}] {{List.codigo}}: {{List.descricao}} : ISN {{List.impeditivoSimplesNacional}} : PSN {{List.permitidoSimplesNacional}}
+    </li>
+    <li class="animate-repeat" ng-if="results.length == 0">
+      <strong>No results found...</strong>
+    </li>
+  </ul>
+
+
