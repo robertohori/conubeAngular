@@ -1,20 +1,58 @@
-<fieldset>
+<fieldset  ng-show="filteredItems > 0">
 
-<p>Any: <input  type="search" ng-model="s" ng-attr-id="s" placeholder="Busca simples"></p>
+
 <color dir="isn"><p><input type="checkbox" id="isn" ng-model="impeditivoSimplesNacional" value="true"  ng-change="allcheck()"  /> <label for="isn">Impeditivo </label></p></color>
 <color dir="psn"><p><input type="checkbox" id="psn" ng-model="permitidoSimplesNacional" value="true" ng-change="allcheck()" /> <label for="psn">Permitido </label></p></color>
 
     	<color dir="tsn"><p ><input type="checkbox"  id="tsn" ng-model="togetherSimplesNacional"  value="true" ng-change="allcheckall()"/> <label for="tsn">Concomitantemente Permitido e impeditivo</label></p></color>
 </fieldset>
 
-
-<ul class="example-animate-container">
-    <li class="animate-repeat" ng-repeat="List in cnaes.result | filter:s | filter:{impeditivoSimplesNacional: impeditivoSimplesNacional,permitidoSimplesNacional:permitidoSimplesNacional  }">
-      [{{$index + 1}}] {{List.codigo}}: {{List.descricao}} : ISN {{List.impeditivoSimplesNacional}} : PSN {{List.permitidoSimplesNacional}}
-    </li>
-    <li class="animate-repeat" ng-if="results.length == 0">
-      <strong>No results found...</strong>
-    </li>
-  </ul>
+<div class="row"  ng-show="filteredItems > 0">
+    <div class="col-md-2">PageSize:
+        <select ng-model="entryLimit" class="form-control">
+            <option>5</option>
+            <option>10</option>
+            <option>20</option>
+            <option>50</option>
+            <option>100</option>
+        </select>
+    </div>
+    
+    
+</div>
+<br/>
+<div class="row" class="example-animate-container">
+    <div class="col-md-12 animate-repeat" ng-show="filteredItems > 0">
+        <pre>Filtered {{ filtered.length }} of {{ totalItems}} total customers</pre> 
+         <pagination total-items="filteredItems" ng-model="bigCurrentPage" ng-change="pageChanged()" items-per-page="entryLimit" max-size="maxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="numPages"></pagination>
+    </div>
+    <div class="col-md-12 animate-repeat" ng-show="filteredItems > 0">
+        <table class="table table-striped table-bordered">
+        <thead>
+        <th>Codigo<a ng-click="sort_by('codigo');"><i class="glyphicon glyphicon-sort"></i></a></th>
+        <th>Descricao<a ng-click="sort_by('descricao');"><i class="glyphicon glyphicon-sort"></i></a></th>
+        <th>ImpeditivoSimplesNacional<a ng-click="sort_by('impeditivoSimplesNacional');"><i class="glyphicon glyphicon-sort"></i></a></th>
+             <th>permitidoSimplesNacional<a ng-click="sort_by('permitidoSimplesNacional');"><i class="glyphicon glyphicon-sort"></i></a></th>
+        </thead>
+        <tbody>
+            <tr  class="animate-repeat" ng-repeat="data in filtered = (cnaes.result | filter:{impeditivoSimplesNacional: impeditivoSimplesNacional,permitidoSimplesNacional:permitidoSimplesNacional}| orderBy : predicate :reverse) | startFrom:(bigCurrentPage-1)*entryLimit | limitTo:entryLimit">
+                <td>{{data.codigo}} </td>
+                <td>{{data.descricao}}</td>
+                <td>{{data.impeditivoSimplesNacional}}</td>
+                  <td>{{data.permitidoSimplesNacional}}</td>
+            </tr>
+        </tbody>
+        </table>
+    </div>
+    <div class="col-md-12 animate-repeat" ng-show="filteredItems == 0">
+        <div class="col-md-12" >
+            <h4>No customers found</h4>
+        </div>
+    </div>
+    <div class="col-md-12" ng-show="filteredItems > 0">
+       <pagination total-items="filteredItems" ng-model="bigCurrentPage" ng-change="pageChanged()" items-per-page="entryLimit" max-size="maxSize" class="pagination-sm" boundary-links="true" rotate="false" num-pages="numPages"></pagination>
+ <pre>Page: {{bigCurrentPage}} / {{numPages}}</pre>
+    </div>
+</div>
 
 

@@ -11,20 +11,47 @@
 
 
 (function () {
-    var app = angular.module('CNAE', ['ngAnimate']);
+    var app = angular.module('CNAE', ['ngAnimate', 'ui.bootstrap','angular-loading-bar']);
+    
+    app.config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
+    cfpLoadingBarProvider.includeSpinner = false;
+    }]);
+    app.filter('startFrom', function () {
+        return function (input, start) {
+
+            if (input) {
+                if (start === 0) {
+                    start = 1;
+                }
+                var s = input.length;
+                if (s > 0) {
+                    start = +start; //parse to int
+                    console.log(start);
+                    return input.slice(start);
+                } else {
+                    return [];
+                }
+            }
+            return [];
+        };
+    });
     app.controller('IndexCNAEController', ['$scope', '$http',
         function ($scope, $http) {
             $scope.cnaes = {};
             $scope.cnaes.result = {};
-            /* GetToday */
+
+
+
+
+            /* GetCNAES */
             $scope.getcnaes = function (search) {
                 $http({
                     method: 'GET',
                     url: 'http://open.nfe.io/v1/cnaes/search?text=' + search + '&apikey=b58801a82418463f961cff952b27baaa'
                 }).success(function (data) {
-                    $scope.cnaes.result = data
+                    $scope.cnaes.result = data;
 
-                        /*{ codigo: data.codigo,
+                    /*{ codigo: data.codigo,
                         secao: data.secao,
                         divisao: data.divisao,
                         grupo: data.grupo,
@@ -37,9 +64,9 @@
 
 
 
-                    ;
+                    $scope.paginacao(data);
 
-                    console.log(data);
+                    // console.log(data);
 
                 }).error(function (err) {
 
@@ -50,7 +77,7 @@
             $scope.callload = function () {
                 if (event.keyCode === 13) {
                     var search = $scope.search;
-                    console.log(search);
+                    //    console.log(search);
                     if (search !== '') {
                         $scope.getcnaes(search);
                     }
@@ -60,7 +87,7 @@
             $scope.loadmain = function () {
 
                 var search = $scope.search;
-                console.log(search);
+                // console.log(search);
                 if (search !== '') {
                     $scope.getcnaes(search);
 
@@ -70,7 +97,7 @@
             $scope.loadmain = function () {
 
                 var search = $scope.search;
-                console.log(search);
+                // console.log(search);
                 if (search !== '') {
                     $scope.getcnaes(search);
 
@@ -101,17 +128,44 @@
                 }
 
             };
-            
-            $scope.showclick = function(name){
+
+            $scope.showclick = function (name) {
                 var sname = $scope.name;
-               
-                console.log(sname);
-               
-            
-            }
+                // console.log(sname);
+            };
+
+            /*Paging*/
+
+            $scope.paginacao = function (data) {
+                $scope.list = data;
+                $scope.currentPage = 1; //current page
+                $scope.entryLimit = 50; //max no of items to display in a page
+                $scope.filteredItems = $scope.list.length; //Initially for no filter
+
+                //  $scope.totalItems = $scope.list.length;
+
+                $scope.maxSize = 5;
+                $scope.bigTotalItems = $scope.filteredItems;
+                $scope.bigCurrentPage = 1;
+
+            };
+
+
+            $scope.pageChanged = function () {
+                $scope.currentPage = $scope.bigCurrentPage;
+            };
+
+            $scope.sort_by = function (predicate) {
+                $scope.predicate = predicate;
+                $scope.reverse = !$scope.reverse;
+            };
+
+
+            /*end paging*/
 
 
     }]);
+
 
 
 
